@@ -36,7 +36,7 @@ seq_printf(archivo, "{\n");
 	seq_printf(archivo, "\t]\n");
 	seq_printf(archivo, "},\n");
  
-		printk("*****************");	
+		
 	}
 
 
