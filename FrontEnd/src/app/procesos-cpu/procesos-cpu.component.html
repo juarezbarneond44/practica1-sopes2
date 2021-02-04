@@ -1,0 +1,92 @@
+<br>
+<div class="row row-cols-1  bg-inforow-cols-md-3 g-4">
+    <div class="col">
+        <div class="card text-black bg-success " >
+            <div class="card-header"><h5>Total DE Procesos</h5></div>
+        <div class="card-body">
+            <div class="text-center "> 
+                <h5> {{totalProc}}</h5>  
+               
+             </div>
+        </div>
+      </div>
+
+
+
+      
+    </div>
+    <div class="col">
+        <div class="card text-black bg-warning " >
+            <div class="card-header"><h5>Procesos En Ejecucion</h5></div>
+        <div class="card-body">
+            <div class="text-center "> 
+                <h5> {{ejecutado}}</h5>  
+               
+             </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+        <div class="card text-black bg-light " >
+            <div class="card-header"><h5>Procesos Detenidos</h5></div>
+        <div class="card-body">
+           
+            <div class="text-center "> 
+               <h5> {{detenidos}}</h5>  
+              
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+        <div class="card text-black bg-danger " >
+            <div class="card-header"><h5>Procesos Zombies</h5></div>
+        <div class="card-body">
+           
+            <div class="text-center "> 
+               <h5> {{zobies}}</h5>  
+              
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+        <div class="card text-black bg-info " >
+            <div class="card-header"><h5>Procesos Suspendidos</h5></div>
+        <div class="card-body">
+           
+            <div class="text-center "> 
+               <h5> {{suspendidos}}</h5>  
+              
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <br>
+  <table class="table">
+    <thead class="table-dark">
+        <th scope="col">Pid</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Ram</th>
+        <th scope="col">Padre</th>
+        <th scope="col">Kill</th>
+    </thead>
+  
+    <tbody>
+        <tr *ngFor="let dato of DatosProcesos">
+            <td>{{dato.pid}}</td>
+            <td>{{dato.nombre}}</td>
+            <td>{{dato.usuario}}</td>
+            <td>{{dato.estado}}</td>
+            <td>{{dato.ram}}</td>
+            <td>{{dato.hijo}}</td>
+            <td>   <button type="button" class="btn btn-danger" (click)="Eliminar(dato.pid)">Kill</button></td>
+        </tr>
+    </tbody>
+  </table>
+  
