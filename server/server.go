@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -23,6 +25,7 @@ type Cpu struct {
 	Nucleo1 string `json:"nucleo1"`
 	Libre1  string `json:"libre1"`
 }
+
 //funcion que realizara los datos de la ram
 func homeRAM(w http.ResponseWriter, req *http.Request) {
 	enableCors(&w) // habilitamos cors
@@ -30,19 +33,18 @@ func homeRAM(w http.ResponseWriter, req *http.Request) {
 
 	println("******** Cargar Datos RAM******")
 
+	// funcion para obtener datos de la ram
+	/*
+	   // de esta manera se obtienen los valores del archivo memo
+	   b, err := ioutil.ReadFile("/proc/memo_201700556") // obtenemos el archivo
+	   	if err != nil {
+	   		fmt.Print(err)
+	   	}
+	   	str := string(b) // convert content to a 'string'
+	   	//fmt.Println(str) // print the content as a 'string'
+	   	json.NewEncoder(w).Encode(str)
+	*/
 
-	// funcion para obtener datos de la ram	 
-/*
-// de esta manera se obtienen los valores del archivo memo 
-b, err := ioutil.ReadFile("/proc/memo_201700556") // obtenemos el archivo
-	if err != nil {
-		fmt.Print(err)
-	}
-	str := string(b) // convert content to a 'string'
-	//fmt.Println(str) // print the content as a 'string'
-	json.NewEncoder(w).Encode(str)
-*/
-	
 	// se utilizo mem.virtualmemory()   ya que los valores del archivo memo no mostraron valores exactos
 	v, _ := mem.VirtualMemory()
 	var Total = v.Total / (1024 * 1024)                  //valor total de ram en mb
@@ -69,15 +71,15 @@ b, err := ioutil.ReadFile("/proc/memo_201700556") // obtenemos el archivo
 func homeCPU(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	println("******** Cargar Datos CPU******")
-	
+
 	//w.Write([]byte("Datos Del CPU")
 
 	percent, _ := cpu.Percent(time.Second, true)
-	var nucleo1 = percent[0] // obtenemos el uso del procesador
+	var nucleo1 = percent[0]   // obtenemos el uso del procesador
 	var libre1 = 100 - nucleo1 // obtenemos el espacio libre del procesador
-	// si se tiene mas de 1 nucleo se puede poner de la siguiente manera 
-	//percent[1],percent[2],percent[n]   
-	fmt.Printf("nucleo 1: %v\n", nucleo1) 
+	// si se tiene mas de 1 nucleo se puede poner de la siguiente manera
+	//percent[1],percent[2],percent[n]
+	fmt.Printf("nucleo 1: %v\n", nucleo1)
 	fmt.Printf("libre 1: %v,\n", libre1)
 	dato := Cpu{
 		Nucleo1: fmt.Sprintf("%v", nucleo1),
@@ -94,14 +96,18 @@ func homeCPU(w http.ResponseWriter, r *http.Request) {
 }
 func Kill(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	println("********KILL PROCESO******")
-	
-_, err := exec.Command("sh", "-c", "echo '"+ sudopassword +"' | sudo -S kill id").Output()
-	
 
+	//println(r.RequestURI)
+	str1 := strings.Replace(r.RequestURI, "/kill/", "", 100)
+	//println(str1)
+	println("********KILL PROCESO******")
+
+	_, err := exec.Command("sh", "-c", "echo 'sopes2020' | sudo -S kill "+str1).Output()
+	if err != nil {
+		println(err)
+	}
 	json.NewEncoder(w).Encode("")
 }
-
 
 func datosCPU(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
@@ -120,15 +126,15 @@ func datosCPU(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
-	
-  s := router.Host("192.168.1.21").Subrouter()
+
+	//s := router.Host("192.168.1.21").Subrouter()
 	println("******** conexion exitosa ******")
-	s.HandleFunc("/Ram", homeRAM).Methods("GET")
-	s.HandleFunc("/kill/{id}", Kill).Methods("GET")
-	s.HandleFunc("/DatoCpu", datosCPU).Methods("GET")
-	s.HandleFunc("/Cpu", homeCPU).Methods("GET")
-	// levantamos el servidor en el puerto 4444 
-	log.Fatal(http.ListenAndServe(":4444", s))
+	router.HandleFunc("/Ram", homeRAM).Methods("GET")
+	router.HandleFunc("/kill/{id}", Kill).Methods("GET")
+	router.HandleFunc("/DatoCpu", datosCPU).Methods("GET")
+	router.HandleFunc("/Cpu", homeCPU).Methods("GET")
+	// levantamos el servidor en el puerto 4444
+	log.Fatal(http.ListenAndServe(":4444", router))
 }
 
 // esta funcion sirve para poder mandar peticiones a angular ya que habilita los cors
