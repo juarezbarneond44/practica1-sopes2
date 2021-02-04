@@ -29,7 +29,7 @@ func homeRAM(w http.ResponseWriter, req *http.Request) {
 	//var Datoram Ram
 
 	println("******** Cargar Datos RAM******")
-	println("201700556")
+
 
 	// funcion para obtener datos de la ram	 
 /*
@@ -96,7 +96,7 @@ func datosCPU(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	println("******** Cargar Datos CPU******")
 
-	b, err := ioutil.ReadFile("/proc/cpu_201700556") // obtenemos el archivo
+	b, err := ioutil.ReadFile("/proc/cpu_grupo5") // obtenemos el archivo
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -109,7 +109,7 @@ func datosCPU(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
-  s := router.Host("192.168.56.1").Subrouter()
+  s := router.Host("192.168.1.21").Subrouter()
 	s.HandleFunc("/Ram", homeRAM).Methods("GET")
 	s.HandleFunc("/DatoCpu", datosCPU).Methods("GET")
 	s.HandleFunc("/Cpu", homeCPU).Methods("GET")
