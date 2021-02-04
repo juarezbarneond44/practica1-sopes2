@@ -92,6 +92,17 @@ func homeCPU(w http.ResponseWriter, r *http.Request) {
 	// enviamos en formato json los datos del cpu mediante peticion http
 	json.NewEncoder(w).Encode(dato)
 }
+func Kill(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	println("********KILL PROCESO******")
+	
+_, err := exec.Command("sh", "-c", "echo '"+ sudopassword +"' | sudo -S kill id").Output()
+	
+
+	json.NewEncoder(w).Encode("")
+}
+
+
 func datosCPU(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	println("******** Cargar Datos CPU******")
@@ -109,8 +120,11 @@ func datosCPU(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
+	
   s := router.Host("192.168.1.21").Subrouter()
+	println("******** conexion exitosa ******")
 	s.HandleFunc("/Ram", homeRAM).Methods("GET")
+	s.HandleFunc("/kill/{id}", Kill).Methods("GET")
 	s.HandleFunc("/DatoCpu", datosCPU).Methods("GET")
 	s.HandleFunc("/Cpu", homeCPU).Methods("GET")
 	// levantamos el servidor en el puerto 4444 
