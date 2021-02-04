@@ -127,14 +127,14 @@ func datosCPU(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 
-	//s := router.Host("192.168.1.21").Subrouter()
+	s := router.Host("192.168.1.21").Subrouter()
 	println("******** conexion exitosa ******")
-	router.HandleFunc("/Ram", homeRAM).Methods("GET")
-	router.HandleFunc("/kill/{id}", Kill).Methods("GET")
-	router.HandleFunc("/DatoCpu", datosCPU).Methods("GET")
-	router.HandleFunc("/Cpu", homeCPU).Methods("GET")
+	s.HandleFunc("/Ram", homeRAM).Methods("GET")
+	s.HandleFunc("/kill/{id}", Kill).Methods("GET")
+	s.HandleFunc("/DatoCpu", datosCPU).Methods("GET")
+	s.HandleFunc("/Cpu", homeCPU).Methods("GET")
 	// levantamos el servidor en el puerto 4444
-	log.Fatal(http.ListenAndServe(":4444", router))
+	log.Fatal(http.ListenAndServe(":4444", s))
 }
 
 // esta funcion sirve para poder mandar peticiones a angular ya que habilita los cors
