@@ -12,7 +12,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/mem"
+	//"github.com/shirou/gopsutil/mem"
 )
 
 type Ram struct {
@@ -34,7 +34,7 @@ func homeRAM(w http.ResponseWriter, req *http.Request) {
 	println("******** Cargar Datos RAM******")
 
 	// funcion para obtener datos de la ram
-	/*
+	
 	   // de esta manera se obtienen los valores del archivo memo
 	   b, err := ioutil.ReadFile("/proc/memo_201700556") // obtenemos el archivo
 	   	if err != nil {
@@ -43,29 +43,6 @@ func homeRAM(w http.ResponseWriter, req *http.Request) {
 	   	str := string(b) // convert content to a 'string'
 	   	//fmt.Println(str) // print the content as a 'string'
 	   	json.NewEncoder(w).Encode(str)
-	*/
-
-	// se utilizo mem.virtualmemory()   ya que los valores del archivo memo no mostraron valores exactos
-	v, _ := mem.VirtualMemory()
-	var Total = v.Total / (1024 * 1024)                  //valor total de ram en mb
-	var Porcentaje = v.UsedPercent                       // porcentaje de utiliacion
-	var used = uint64(float64(Total) * Porcentaje / 100) // cantidad de memoria utilizada
-
-	datos := Ram{
-		Total:      fmt.Sprintf("%v", Total),
-		Porcentaje: fmt.Sprintf("%f", Porcentaje),
-		Usado:      fmt.Sprintf("%v", used),
-	}
-
-	b, err := json.MarshalIndent(datos, "", "  ")
-	if err != nil {
-		fmt.Println(err)
-	}
-	// valores de la ram en consola
-	fmt.Print(string(b))
-
-	// enviamos en formato json los datos de la ram mediante peticion http
-	json.NewEncoder(w).Encode(datos)
 
 }
 func homeCPU(w http.ResponseWriter, r *http.Request) {
