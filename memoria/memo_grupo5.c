@@ -15,10 +15,9 @@ static int escribir_archivo(struct seq_file * archivo, void *v){
     si_meminfo(&inf);
     long total_memoria =(inf.totalram * 4);
     long memoria_libre =(inf.freeram*4);
-    seq_printf(archivo, "Memoria Total : \t %8lu MB\n",total_memoria/1024);
-    seq_printf(archivo, "Memoria libre : \t %8lu MB\n",memoria_libre/1024);
-    seq_printf(archivo, "Memoria en uso : \t %8lu MB\n",(total_memoria-memoria_libre)/1024);
-    seq_printf(archivo, "Porcentaje de Memoria : \t %8lu \n",((total_memoria-memoria_libre)/total_memoria*100));
+    seq_printf(archivo, "total:%8lu\n",total_memoria/1024);
+    seq_printf(archivo, "libre:%8lu\n",memoria_libre/1024);
+    seq_printf(archivo, "uso:%8lu\n",(total_memoria-memoria_libre)/1024);
 	return 0;
 }
 
