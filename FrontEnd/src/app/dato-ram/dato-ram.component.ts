@@ -42,27 +42,68 @@ export class DatoRamComponent implements OnInit {
     this.PedirDatos()
   }
  
-public valorActualRam:Ram1={"total":"","porcentaje":"","usado":""}
- PedirDatos()
-  {
-  
-      // eliminaremos el primer dato del arreglo 
-      this.DatosRam.shift();
-    
-    this.BackendService.GetRam().subscribe((res)=>{
-    this.valorActualRam={"total":res.total,"porcentaje":res.porcentaje,"usado":res.usado};   
-     this.DatosRam.push(this.valorActualRam.usado)// guardamos el valor de la ram en el arreglo de valores
-      
-     //console.log(this.DatosRam)
-     
-     // timer de 2.5 segundos para pedir el otro valor
-     setTimeout(() => {
-       this.PedirDatos()
-     }, 2000);
-     
-    })
-      
-  }
+public valorActualRam:Ram1={"total":"","porcentaje":"","usado":"","libre":""}
+PedirDatos()
+{
 
+    // eliminaremos el primer dato del arreglo 
+    this.DatosRam.shift();
+
+  this.BackendService.GetRam().subscribe((res)=>{
+
+  res=res+""
+  var estado=0;
+  var texto=""
+  var numero=""
+    for (let x = 0; x < res.toString().length; x++) {
+      let dato=res.toString().charAt(x);
+      if(dato===" "){continue;}
+      switch(estado){
+
+        case 0:
+      
+          if(dato===":"){estado=1;}
+          else
+          {
+            texto=texto+dato;
+          }
+        break;
+        case 1:
+          if(dato==="\n")
+          {
+            if(texto==="total"){this.valorActualRam.total=numero;}
+            else if(texto==="libre"){this.valorActualRam.libre=numero;}
+            else if(texto==="uso"){this.valorActualRam.usado=numero;}
+            numero="";
+            texto="";
+            estado=0;
+          }
+          else{
+            numero=numero+dato
+          }
+          break;
+      }
+      
+    }
+
+this.valorActualRam.porcentaje= (Number(this.valorActualRam.usado)/Number(this.valorActualRam.total))*100 +""
+this.DatosRam.push(this.valorActualRam.usado)
+
+
+
+
+     
+   //this.DatosRam.push(this.valorActualRam.usado)// guardamos el valor de la ram en el arreglo de valores
+    
+   //console.log(this.DatosRam)
+   
+   // timer de 2.5 segundos para pedir el otro valor
+   setTimeout(() => {
+     this.PedirDatos()
+   }, 2000);
+   
+  })
+    
+}
 
 }
